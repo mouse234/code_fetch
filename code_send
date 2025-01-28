@@ -1,0 +1,41 @@
+import requests
+from bs4 import BeautifulSoup
+
+# Step 1: Load the form page to extract hidden fields
+url = "https://www.leostarastrology.com/leostar-code"
+response = requests.get(url)
+soup = BeautifulSoup(response.text, "html.parser")
+
+# Extract hidden fields
+viewstate = soup.find("input", {"id": "__VIEWSTATE"})["value"]
+event_validation = soup.find("input", {"id": "__EVENTVALIDATION"})["value"]
+viewstate_generator = soup.find("input", {"id": "__VIEWSTATEGENERATOR"})["value"]
+
+# Step 2: Prepare form data
+form_data = {
+    "__VIEWSTATE": viewstate,
+    "__EVENTVALIDATION": event_validation,
+    "__VIEWSTATEGENERATOR": viewstate_generator,
+    "leostarcodewebenglish1$txtName": "John Doe",  # Replace with actual name
+    "leostarcodewebenglish1$txtEmail": "johndoe@example.com",  # Replace with actual email
+    "leostarcodewebenglish1$txtPhoneNumber": "1234567890",  # Replace with actual phone number
+    "leostarcodewebenglish1$cdno1": "123",  # Replace with actual CD serial number parts
+    "leostarcodewebenglish1$cdno2": "456",
+    "leostarcodewebenglish1$cdno3": "789",
+    "leostarcodewebenglish1$cdno4": "012",
+    "leostarcodewebenglish1$CustomerCodeTxt1": "ABCDE",  # Replace with actual customer code parts
+    "leostarcodewebenglish1$CustomerCodeTxt2": "FGHIJ",
+    "leostarcodewebenglish1$CustomerCodeTxt3": "KLMNO",
+    "leostarcodewebenglish1$CustomerCodeTxt4": "PQRST",
+    "leostarcodewebenglish1$CustomerCodeTxt5": "UVWXY",
+    "leostarcodewebenglish1$CustomerCodeTxt6": "Z1234",
+    "leostarcodewebenglish1$Button1": "GET 30 DIGIT CODE",  # Submit button
+}
+
+# Step 3: Submit the form
+response = requests.post(url, data=form_data)
+
+# Step 4: Parse the response to extract the activation code
+soup = BeautifulSoup(response.text, "html.parser")
+activation_code = soup.find("p", {"id": "leostarcodewebenglish1_FptCode"}).text.strip()
+print("Activation Code:", activation_code)
